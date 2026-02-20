@@ -67,7 +67,10 @@ const onAnswer = async (event) => {
 
   nrOfTries++
   const choiceContainer = event.target.closest(".choice-container")
-  if(!choiceContainer) {return} // als er niet op een antwoord is geklikt, doe niks}
+  if ( !choiceContainer ) {
+    return // als er niet op een antwoord is geklikt, doe niks
+  }
+  
   const answer = Number(choiceContainer.dataset.answer)
   
   if(currentQuestion.answer === answer) {
@@ -94,7 +97,6 @@ const startProgressBar = (onComplete) => {
 )
 }
 
-
 const handleCorrectAnswer = () => {
   score += nrOfTries === 1 ? bonusScore : 1 // meer punten als het antwoord in 1 keer goed is
   scoreEl.textContent = `Score: ${score}`
@@ -112,7 +114,6 @@ const handleCorrectAnswer = () => {
     }
   })
 }
-
 
 const getNewQuestion = () => {
   questionIndex = Math.floor(Math.random() * availableQuestions.length);
