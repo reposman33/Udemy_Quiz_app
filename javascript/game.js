@@ -66,52 +66,51 @@ const onAnswer = async (event) => {
   }
 
   nrOfTries++
-  // toon feedback
   const choiceContainer = event.target.closest(".choice-container")
   if(!choiceContainer) {return} // als er niet op een antwoord is geklikt, doe niks}
   const answer = Number(choiceContainer.dataset.answer)
-
+  
   if(currentQuestion.answer === answer) {
-    score += nrOfTries === 1 ? bonusScore : 1 // meer punten als het antwoord in 1 keer goed is
-    scoreEl.textContent = `Score: ${score}`
-    feedbackEl.textContent = TEXT_GOED_ANTWOORD
+    handleCorrectAnswer()
   } else {
     feedbackEl.textContent = TEXT_FOUT_ANTWOORD
   }
-
-  if(currentQuestion.answer === answer) {
-    let progressbarWidth = 0
-    const intervalId = setInterval(() => {
-      // laat progressbar niet uit container lopen
-      if ( progressbarWidth + progressbarWidthDelta <= 100 ) {
-        progressbarWidth += progressbarWidthDelta
-      } else {
-        progressbarWidth = 0
-        feedbackEl.textContent = ""
-        nrOfTries = 0
-        clearInterval(intervalId)
-      }
-      
-      if ( progressbarWidth === 0 ) {
-        if ( availableQuestions.length === 0 ) {
-          feedbackContainerEl.textContent = TEXT_GAME_OVER
-        } else {
-          showNextQuestion()
-        }
-      }
-      progressBarEl.style.width = `${progressbarWidth}%`
-    }, intervalTime
-  )}
 }
+
 const startProgressBar = (onComplete) => {
+  acceptingAnswers = false
+  let progressbarWidth = 0
+  const intervalId = setInterval(() => {
+    // laat progressbar niet uit container lopen
+    if ( progressbarWidth + progressbarWidthDelta <= 100 ) {
+      progressbarWidth += progressbarWidthDelta
+    } else {
+      onComplete()
+      clearInterval(intervalId)
+    }
+    
+    progressBarEl.style.width = `${progressbarWidth}%`
+  }, intervalTime
+)
 }
 
 
 const handleCorrectAnswer = () => {
-    score += nrOfTries === 1 ? bonusScore : 1 // meer punten als het antwoord in 1 keer goed is
-    scoreEl.textContent = `Score: ${score}`
-    feedbackEl.textContent = TEXT_GOED_ANTWOORD
-    startProgressBar
+  score += nrOfTries === 1 ? bonusScore : 1 // meer punten als het antwoord in 1 keer goed is
+  scoreEl.textContent = `Score: ${score}`
+  feedbackEl.textContent = TEXT_GOED_ANTWOORD
+  
+  startProgressBar(() => {
+    feedbackEl.textContent = ""
+    nrOfTries = 0
+    acceptingAnswers = true
+
+    if ( availableQuestions.length === 0 ) {
+      resetGame()
+    } else {
+      showNextQuestion()
+    }
+  })
 }
 
 
