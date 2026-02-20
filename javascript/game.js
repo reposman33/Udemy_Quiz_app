@@ -20,6 +20,7 @@ let score = 0;
 let questionIndex;
 let availableQuestions = [];
 let nrOfTries = 0;
+let acceptingAnswers = true;
 let questions = [
    {
     "question": "Inside which HTML element do we put the JavaScript??",
@@ -62,6 +63,10 @@ availableQuestions = [ ...questions ];
 
 // GAME LOGIC
 const onAnswer = async (event) => {
+  if(!acceptingAnswers) {
+    return // als er nog geen antwoord geaccepteerd wordt, doe niks
+  }
+
   nrOfTries++
   // toon feedback
   const choiceContainer = event.target.closest(".choice-container")
