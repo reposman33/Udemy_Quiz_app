@@ -1,150 +1,169 @@
-/* HTML ELEMENTS */
-const gameEl = document.getElementById("game");
-const questionEl = document.getElementById("question");
-const feedbackContainerEl = document.querySelector(".feedback-container");
-const progressBarEl = document.querySelector(".progressBar");
-const feedbackEl = document.querySelector(".feedback-text");
-const choicesEl = document.querySelectorAll(".choice-text");
-const questionCountEl = document.getElementById("questionCount");
-const scoreEl = document.getElementsByClassName("score")[0];
+export class QuizGame {
 
-// PROGRESSBAR CONSTANTS
-const progressDelay = 3000
-const intervalTime = 50
-const progressbarWidthDelta = 100 / (progressDelay / intervalTime)
+  constructor() {
+    /* HTML ELEMENTS */
+    this.gameEl = document.getElementById("game");
+    this.questionEl = document.getElementById("question");
+    this.feedbackContainerEl = document.querySelector(".feedback-container");
+    this.progressBarEl = document.querySelector(".progressBar");
+    this.feedbackEl = document.querySelector(".feedback-text");
+    this.choicesEl = document.querySelectorAll(".choice-text");
+    this.questionCountEl = document.getElementById("questionCount");
+    this.scoreEl = document.getElementsByClassName("score")[0];
 
-// QUIZ VARIABELEN
-const bonusScore = 10
-let currentQuestion = {};
-let score = 0;
-let questionIndex;
-let nrOfTries = 0;
-let acceptingAnswers = true;
-let questions = [
-   {
-    "question": "Inside which HTML element do we put the JavaScript??",
-    "answers": [
-      "<script>",
-      "<javascript>",
-      "<js>",
-      "<scripting>"
-    ],
-    "answer": 0
-  },
-  {
-    "question": "What is the correct syntax for referring to an external script called 'xxx.js'?",
-    "answers": [
-      "<script href='xxx.js'>",
-      "<script name='xxx.js'>",
-      "<script src='xxx.js'>",
-      "<script file='xxx.js'>"
-    ],
-    "answer": 2
-  },
-  {
-    "question": " How do you write 'Hello World' in an alert box?",
-    "answers": [
-      "msgBox('Hello World');",
-      "alertBox('Hello World');",
-      "msg('Hello World');",
-      "alert('Hello World');"
-    ],
-    "answer": 3
-  }
-];
+    // PROGRESSBAR CONSTANTS
+    this.progressDelay = 3000
+    this.intervalTime = 50
+    this.progressbarWidthDelta = 100 / (this.progressDelay / this.intervalTime)
 
-/* TEXT CONSTANTS */
-const TEXT_GAME_OVER = "Alle vragen zijn gesteld."
-const TEXT_GOED_ANTWOORD = "GOED antwoord!"
-const TEXT_FOUT_ANTWOORD = "Fout antwoord... Probeer opnieuw"
-let availableQuestions = [ ...questions ];
+    // QUIZ VARIABELEN
+    this.bonusScore = 10
+    this.currentQuestion = {};
+    this.score = 0;
+    this.questionIndex;
+    this.nrOfTries = 0;
+    this.acceptingAnswers = true;
+    this.questions = [];
 
-// GAME LOGIC
-const onAnswer = async (event) => {
-  const choiceContainer = event.target.closest(".choice-container")
-  if(!choiceContainer || !acceptingAnswers) {
-    return // als er nog geen antwoord geaccepteerd wordt, doe niks
+    /* TEXT CONSTANTS */
+    this.TEXT_GAME_OVER = "Alle vragen zijn gesteld."
+    this.TEXT_GOED_ANTWOORD = "GOED antwoord!"
+    this.TEXT_FOUT_ANTWOORD = "Fout antwoord... Probeer opnieuw"
+
+    this.init()
+
   }
 
-  const answer = Number(choiceContainer.dataset.answer)
-  processAnswer(answer)  
-}
+  init() {
+    this.initQuestions()
+    this.showNextQuestion()
+    this.gameEl.addEventListener('click', (event) => this.onAnswer(event))
+  }
 
-const startProgressBar = (onComplete) => {
-  acceptingAnswers = false
-  let progressbarWidth = 0
-  const intervalId = setInterval(() => {
-    // laat progressbar niet uit container lopen
-    if ( progressbarWidth + progressbarWidthDelta <= 100 ) {
-      progressbarWidth += progressbarWidthDelta
+  initQuestions() {
+    this.questions = [
+      {
+        "question": "Inside which HTML element do we put the JavaScript??",
+        "answers": [
+          "<script>",
+          "<javascript>",
+          "<js>",
+          "<scripting>"
+        ],
+        "answer": 0
+      },
+      {
+        "question": "What is the correct syntax for referring to an external script called 'xxx.js'?",
+        "answers": [
+          "<script href='xxx.js'>",
+          "<script name='xxx.js'>",
+          "<script src='xxx.js'>",
+          "<script file='xxx.js'>"
+        ],
+        "answer": 2
+      },
+      {
+        "question": " How do you write 'Hello World' in an alert box?",
+        "answers": [
+          "msgBox('Hello World');",
+          "alertBox('Hello World');",
+          "msg('Hello World');",
+          "alert('Hello World');"
+        ],
+        "answer": 3
+      }
+    ];
+
+    this.availableQuestions = [ ...this.questions ];
+  }
+
+
+  // GAME LOGIC
+  onAnswer (event) {
+    
+    const choiceContainer = event.target.closest(".choice-container")
+    if(!choiceContainer || !this.acceptingAnswers) {
+      return // als er nog geen antwoord geaccepteerd wordt, doe niks
+    }
+    
+    const answer = Number(choiceContainer.dataset.answer)
+    this.processAnswer(answer)  
+  }
+
+  processAnswer(answer) {
+    this.nrOfTries++
+    
+    if(this.currentQuestion.answer === answer) {
+      this.handleCorrectAnswer()
     } else {
-      onComplete()
-      clearInterval(intervalId)
+      this.feedbackEl.textContent = this.TEXT_FOUT_ANTWOORD
+    }
+  }
+
+  handleCorrectAnswer() {
+    this.acceptingAnswers = false
+    this.score += this.nrOfTries === 1 ? this.bonusScore : 1 // meer punten als het antwoord in 1 keer goed is
+    this.scoreEl.textContent = `Score: ${this.score}`
+    this.feedbackEl.textContent = this.TEXT_GOED_ANTWOORD
+    
+    this.startProgressBar(() => {
+      this.nrOfTries = 0
+      this.feedbackEl.textContent = ""
+      this.acceptingAnswers = true
+      this.showNextQuestion()
+    })
+  }
+
+  startProgressBar(onComplete) {
+    let progressbarWidth = 0
+    const intervalId = setInterval(() => {
+      // laat progressbar niet uit container lopen
+      if ( progressbarWidth + this.progressbarWidthDelta <= 100 ) {
+        progressbarWidth += this.progressbarWidthDelta
+      } else {
+        onComplete()
+        clearInterval(intervalId)
+      }
+
+        this.progressBarEl.style.width = `${progressbarWidth}%`
+      }, this.intervalTime
+    )
+  }
+
+  getNewQuestion(){
+    if(this.availableQuestions.length === 0) {
+      return null
+    }
+    this.questionIndex = Math.floor(Math.random() * this.availableQuestions.length);
+    return this.availableQuestions.splice(this.questionIndex,1)[0]
+  }
+
+  showNextQuestion() {
+    // haal een vraag op 
+    this.currentQuestion = this.getNewQuestion()
+    if ( !this.currentQuestion ) {
+      this.resetGame()
+      return 
     }
 
-    progressBarEl.style.width = `${progressbarWidth}%`
-  }, intervalTime
-)
-}
-
-const processAnswer = (answer) => {
-  nrOfTries++
-  if(currentQuestion.answer === answer) {
-    handleCorrectAnswer()
-  } else {
-    feedbackEl.textContent = TEXT_FOUT_ANTWOORD
-  }
-}
-
-const handleCorrectAnswer = () => {
-  acceptingAnswers = false
-  score += nrOfTries === 1 ? bonusScore : 1 // meer punten als het antwoord in 1 keer goed is
-  scoreEl.textContent = `Score: ${score}`
-  feedbackEl.textContent = TEXT_GOED_ANTWOORD
-  
-  startProgressBar(() => {
-    nrOfTries = 0
-    feedbackEl.textContent = ""
-    acceptingAnswers = true
-    showNextQuestion()
-  })
-}
-
-const getNewQuestion = () => {
-  if(availableQuestions.length === 0) {
-    return null
-  }
-  questionIndex = Math.floor(Math.random() * availableQuestions.length);
-  return availableQuestions.splice(questionIndex,1)[0]
-}
-
-const showNextQuestion = () => {
-  // haal een vraag op 
-  currentQuestion = getNewQuestion()
-  if ( !currentQuestion ) {
-    resetGame()
-    return 
+    // toon de vraag
+    this.questionEl.textContent = this.currentQuestion.question
+    this.questionCountEl.textContent = `Vraag ${this.questions.length - this.availableQuestions.length} van ${this.questions.length}`
+    // toon de antwoorden bij de vraag
+    this.choicesEl.forEach((choiceEl, index) => {
+      choiceEl.textContent = this.currentQuestion.answers[index]
+    })
   }
 
-  // toon de vraag
-  questionEl.textContent = currentQuestion.question
-  questionCountEl.textContent = `Vraag ${questions.length - availableQuestions.length} van ${questions.length}`
-  // toon de antwoorden bij de vraag
-  choicesEl.forEach((choiceEl, index) => {
-    choiceEl.textContent = currentQuestion.answers[index]
-  })
+  resetGame() {
+    this.feedbackContainerEl.textContent = this.TEXT_GAME_OVER
+    this.availableQuestions = [ ...this.questions ];
+    this.scoreEl.textContent = `Score: ${this.score}`;
+    this.progressBarEl.style.width = "0%";
+  }
+
 }
 
-const resetGame = () => {
-  feedbackContainerEl.textContent = TEXT_GAME_OVER
-  availableQuestions = [ ...questions ];
-  scoreEl.textContent = `Score: ${score}`;
-}
-
-// START SPEL
-document.addEventListener('DOMContentLoaded', () => {
-  progressBarEl.style.width = "0%";
-  
-  gameEl.addEventListener('click', onAnswer)
-  showNextQuestion()
-})
+document.addEventListener("DOMContentLoaded", () => {
+  new QuizGame();
+});
