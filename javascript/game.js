@@ -23,27 +23,33 @@ let nrOfTries = 0;
 let questions = [
    {
     "question": "Inside which HTML element do we put the JavaScript??",
-    "choice1": "<script>",
-    "choice2": "<javascript>",
-    "choice3": "<js>",
-    "choice4": "<scripting>",
-    "answer": 1
+    "answers": [
+      "<script>",
+      "<javascript>",
+      "<js>",
+      "<scripting>"
+    ],
+    "answer": 0
   },
   {
     "question": "What is the correct syntax for referring to an external script called 'xxx.js'?",
-    "choice1": "<script href='xxx.js'>",
-    "choice2": "<script name='xxx.js'>",
-    "choice3": "<script src='xxx.js'>",
-    "choice4": "<script file='xxx.js'>",
-    "answer": 3
+    "answers": [
+      "<script href='xxx.js'>",
+      "<script name='xxx.js'>",
+      "<script src='xxx.js'>",
+      "<script file='xxx.js'>"
+    ],
+    "answer": 2
   },
   {
     "question": " How do you write 'Hello World' in an alert box?",
-    "choice1": "msgBox('Hello World');",
-    "choice2": "alertBox('Hello World');",
-    "choice3": "msg('Hello World');",
-    "choice4": "alert('Hello World');",
-    "answer": 4
+    "answers": [
+      "msgBox('Hello World');",
+      "alertBox('Hello World');",
+      "msg('Hello World');",
+      "alert('Hello World');"
+    ],
+    "answer": 3
   }
 ];
 
@@ -118,9 +124,8 @@ const showNextQuestion = () => {
   questionEl.textContent = currentQuestion.question
   questionCountEl.textContent = `Vraag ${questions.length - availableQuestions.length} van ${questions.length}`
   // toon de antwoorden bij de vraag
-  choicesEl.forEach((el, i) => {
-    const choiceKey = `choice${i + 1}`;
-    el.textContent = currentQuestion[choiceKey]
+  choicesEl.forEach((choiceEl, index) => {
+    choiceEl.textContent = currentQuestion.answers[index]
   })
 }
 
