@@ -18,7 +18,6 @@ const bonusScore = 10
 let currentQuestion = {};
 let score = 0;
 let questionIndex;
-let availableQuestions = [];
 let nrOfTries = 0;
 let acceptingAnswers = true;
 let questions = [
@@ -58,8 +57,7 @@ let questions = [
 const TEXT_GAME_OVER = "Alle vragen zijn gesteld."
 const TEXT_GOED_ANTWOORD = "GOED antwoord!"
 const TEXT_FOUT_ANTWOORD = "Fout antwoord... Probeer opnieuw"
-
-availableQuestions = [ ...questions ];
+let availableQuestions = [ ...questions ];
 
 // GAME LOGIC
 const onAnswer = async (event) => {
