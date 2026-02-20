@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Quiz - Play</title>
+  <link rel="stylesheet" href="./styles/css/app.css">
+  <link rel="stylesheet" href="./styles/css/game.css">
+</head>
+<body>
+  <div class="container">
+    <div id="game" class="justify-center flex-column">
+      <h2 id="question">Wat is het antwoord op deze vraag?</h2>
+      <div class="flex-row justify-between">
+        <h3 id="questionCount"></h3><h3 class="score"></h3>
+      </div>
+      <div class="choice-container" data-answer="1">
+        <p class="choice-prefix">A</p>
+        <p class="choice-text">Kies 1</p>
+      </div>
+      <div class="choice-container" data-answer="2">
+        <p class="choice-prefix">B</p>
+        <p class="choice-text">Kies 2</p>
+      </div>
+      <div class="choice-container" data-answer="3">
+        <p class="choice-prefix">C</p>
+        <p class="choice-text">Kies 3</p>
+      </div>
+      <div class="choice-container" data-answer="4">
+        <p class="choice-prefix">D</p>
+        <p class="choice-text">Kies 4</p>
+      </div>
+
+      <div class="feedback-container">
+        <span class="feedback-text"></span>
+        <div class="progressBar"></div>
+      </div>
+      
+    </div>
+  </div>
+  <script src="./javascript/game.js"></script>
+
+</body>
+</html>

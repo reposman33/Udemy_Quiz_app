@@ -1,0 +1,12 @@
+@use "./variables" as variables;
+
+@mixin hover() {
+  cursor: pointer;
+  box-shadow: 0 0.4rem 1.4rem 0 variables.$box-shadow-color;
+  transform: translateY(-0.1rem);
+  transition: transform 150ms;
+}
+
+@mixin border {
+  border: 0.1rem solid variables.$border-color;
+}
