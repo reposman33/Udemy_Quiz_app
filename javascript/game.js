@@ -1,10 +1,10 @@
 /* HTML ELEMENTS */
 const gameEl = document.getElementById("game");
 const questionEl = document.getElementById("question");
-const feedbackContainerEl = Array.from(document.getElementsByClassName("feedback-container"))[0];
-const progressBarEl = Array.from(document.getElementsByClassName("progressBar"))[0];
-const feedbackEl = Array.from(document.getElementsByClassName("feedback-text"))[0];
-const choicesEl = Array.from(document.getElementsByClassName("choice-text"));
+const feedbackContainerEl = document.querySelector(".feedback-container");
+const progressBarEl = document.querySelector(".progressBar");
+const feedbackEl = document.querySelector(".feedback-text");
+const choicesEl = document.querySelectorAll(".choice-text");
 const questionCountEl = document.getElementById("questionCount");
 const scoreEl = document.getElementsByClassName("score")[0];
 
