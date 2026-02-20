@@ -61,23 +61,13 @@ let availableQuestions = [ ...questions ];
 
 // GAME LOGIC
 const onAnswer = async (event) => {
-  if(!acceptingAnswers) {
+  const choiceContainer = event.target.closest(".choice-container")
+  if(!choiceContainer || !acceptingAnswers) {
     return // als er nog geen antwoord geaccepteerd wordt, doe niks
   }
 
-  nrOfTries++
-  const choiceContainer = event.target.closest(".choice-container")
-  if ( !choiceContainer ) {
-    return // als er niet op een antwoord is geklikt, doe niks
-  }
-  
   const answer = Number(choiceContainer.dataset.answer)
-  
-  if(currentQuestion.answer === answer) {
-    handleCorrectAnswer()
-  } else {
-    feedbackEl.textContent = TEXT_FOUT_ANTWOORD
-  }
+  processAnswer(answer)  
 }
 
 const startProgressBar = (onComplete) => {
@@ -91,31 +81,39 @@ const startProgressBar = (onComplete) => {
       onComplete()
       clearInterval(intervalId)
     }
-    
+
     progressBarEl.style.width = `${progressbarWidth}%`
   }, intervalTime
 )
 }
 
+const processAnswer = (answer) => {
+  nrOfTries++
+  if(currentQuestion.answer === answer) {
+    handleCorrectAnswer()
+  } else {
+    feedbackEl.textContent = TEXT_FOUT_ANTWOORD
+  }
+}
+
 const handleCorrectAnswer = () => {
+  acceptingAnswers = false
   score += nrOfTries === 1 ? bonusScore : 1 // meer punten als het antwoord in 1 keer goed is
   scoreEl.textContent = `Score: ${score}`
   feedbackEl.textContent = TEXT_GOED_ANTWOORD
   
   startProgressBar(() => {
-    feedbackEl.textContent = ""
     nrOfTries = 0
+    feedbackEl.textContent = ""
     acceptingAnswers = true
-
-    if ( availableQuestions.length === 0 ) {
-      resetGame()
-    } else {
-      showNextQuestion()
-    }
+    showNextQuestion()
   })
 }
 
 const getNewQuestion = () => {
+  if(availableQuestions.length === 0) {
+    return null
+  }
   questionIndex = Math.floor(Math.random() * availableQuestions.length);
   return availableQuestions.splice(questionIndex,1)[0]
 }
@@ -123,6 +121,11 @@ const getNewQuestion = () => {
 const showNextQuestion = () => {
   // haal een vraag op 
   currentQuestion = getNewQuestion()
+  if ( !currentQuestion ) {
+    resetGame()
+    return 
+  }
+
   // toon de vraag
   questionEl.textContent = currentQuestion.question
   questionCountEl.textContent = `Vraag ${questions.length - availableQuestions.length} van ${questions.length}`
