@@ -132,6 +132,11 @@ const showNextQuestion = () => {
   })
 }
 
+const resetGame = () => {
+  feedbackContainerEl.textContent = TEXT_GAME_OVER
+  availableQuestions = [ ...questions ];
+  scoreEl.textContent = `Score: ${score}`;
+}
 
 // START SPEL
 document.addEventListener('DOMContentLoaded', () => {
